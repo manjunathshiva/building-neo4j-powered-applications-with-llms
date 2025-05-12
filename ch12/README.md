@@ -89,8 +89,8 @@ gcloud services enable cloudresourcemanager.googleapis.com \
 - **Option 1**: Upload files manually using the Cloud Shell Editor.
 - **Option 2**: Clone the repository from GitHub:
   ```bash
-  git clone https://github.com/PacktPublishing/Gen-AI-with-Neo4j-Knowledge-Graphs-Vector-Search.git
-  cd Gen-AI-with-Neo4j-Knowledge-Graphs-Vector-Search/ch12
+  git clone https://github.com/PacktPublishing/Building-Neo4j-Powered-Applications-with-LLMs.git
+  cd Building-Neo4j-Powered-Applications-with-LLMs/ch12
   ```
 
 ---
