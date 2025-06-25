@@ -46,35 +46,18 @@ public class ProcessArticles implements Runnable, IRequest {
             int processingSize = dbData.size() ;
             List<Map<String, Object>> embeddings = new ArrayList<>() ;
             int batchSize = 100 ;
-            List<TextSegment> inputData = new ArrayList<>() ;
+            List<String> inputData = new ArrayList<>() ;
             List<String> ids = new ArrayList<>() ;
 
             for( EncodeRequest request: dbData ) {
-                /****
-                if (i > 0 && i % configuration.getBatchSize() == 0) {
-                    System.out.println("Saving Embeddings to Graph : " + i);
-                    neo4jService.saveArticleEmbeddings(embeddings);
-                    embeddings.clear();
-                    curStatus = ( ( i * 100.0 ) / processingSize ) + " %" ;
-                }
-                i++;
-
-                Map<String, Object> embedMap = new HashMap<>();
-                String id = request.getId();
-                System.out.println("Retrieving embedding");
-                Embedding embedding = embeddingModelService.generateEmbedding(request.getText());
-                embedMap.put("id", id);
-                embedMap.put("embedding", embedding.vector());
-                embeddings.add(embedMap);
-                 ***/
                 if (i > 0 && i % batchSize == 0) {
                     System.out.println("Retrieving Batch embedding");
-                    List<Embedding> embedList = embeddingModelService.generateEmbeddingBatch(inputData) ;
+                    List<float[]> embedList = embeddingModelService.generateEmbeddingBatch(inputData) ;
                     System.out.println("Saving Embeddings to Graph : " + i);
                     for( int j = 0 ; j < embedList.size() ; j++ ) {
                         Map<String, Object> embedMap = new HashMap<>();
                         embedMap.put("id", ids.get(j));
-                        embedMap.put("embedding", embedList.get(j).vector());
+                        embedMap.put("embedding", embedList.get(j));
                         embeddings.add(embedMap) ;
                     }
                     neo4jService.saveArticleEmbeddings(embeddings);
@@ -84,18 +67,18 @@ public class ProcessArticles implements Runnable, IRequest {
                     curStatus = ( ( i * 100.0 ) / processingSize ) + " %" ;
                 }
                 ids.add(request.getId()) ;
-                inputData.add(TextSegment.textSegment(request.getText())) ;
+                inputData.add(request.getText()) ;
                 i++ ;
             }
 
             if( inputData.size() > 0 ) {
                 System.out.println("Retrieving Batch embedding");
-                List<Embedding> embedList = embeddingModelService.generateEmbeddingBatch(inputData) ;
+                List<float[]> embedList = embeddingModelService.generateEmbeddingBatch(inputData) ;
                 System.out.println("Saving Embeddings to Graph : " + i);
                 for( int j = 0 ; j < embedList.size() ; j++ ) {
                     Map<String, Object> embedMap = new HashMap<>();
                     embedMap.put("id", ids.get(j));
-                    embedMap.put("embedding", embedList.get(j).vector());
+                    embedMap.put("embedding", embedList.get(j));
                     embeddings.add(embedMap) ;
                 }
                 neo4jService.saveArticleEmbeddings(embeddings);
